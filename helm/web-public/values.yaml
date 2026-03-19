@@ -30,6 +30,9 @@ ingress:
         - ownpulse.health
         - www.ownpulse.health
 
+imagePullSecrets:
+  - name: ghcr-pull-secret
+
 resources:
   requests:
     memory: 32Mi
