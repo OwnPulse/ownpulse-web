@@ -1,0 +1,201 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) OwnPulse Contributors
+
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="About" description="What OwnPulse is, why it exists, and how the cooperative model works.">
+  <!-- Mission -->
+  <section class="py-20 md:py-28 bg-surface-elevated">
+    <div class="mx-auto max-w-3xl px-6">
+      <h1 class="text-4xl font-bold text-neutral-900 font-display">Health data that works for you</h1>
+
+      <div class="mt-10 space-y-6 text-lg text-neutral-600 leading-relaxed">
+        <p>
+          Your health data is scattered across a dozen apps, each with its own export format, its own
+          terms of service, and its own incentive to keep you locked in. Most of them sell aggregate
+          data to insurers and researchers — you never see the value.
+        </p>
+        <p>
+          OwnPulse is a cooperative: a platform owned and governed by its members. It collects every
+          meaningful health signal — wearables, labs, interventions, subjective check-ins — and puts
+          them on a single timeline you control. The code is open source. The data schema is public
+          domain. You can self-host on a $6/month VPS or use the cooperative-hosted tier.
+        </p>
+        <p>
+          When members choose to share anonymized data for research, 80% of the revenue flows back to
+          them as hosting credits or charitable donations. The other 20% covers cooperative operating
+          costs. There are no investors to extract value. The board is elected by members. The
+          architecture is designed so that even if the cooperative disappears, your data remains yours
+          — fully exportable in open formats.
+        </p>
+        <p>
+          This is not a health app that happens to be open source. It's health data infrastructure
+          built from the ground up for sovereignty, portability, and collective benefit.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What OwnPulse tracks -->
+  <section class="py-20 md:py-28 bg-surface">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="text-3xl font-bold text-neutral-900 font-display">What OwnPulse tracks</h2>
+
+      <div class="mt-10 grid sm:grid-cols-2 gap-8">
+        <div>
+          <h3 class="font-semibold text-neutral-800">Wearables &amp; devices</h3>
+          <p class="mt-2 text-neutral-600">
+            HRV, resting heart rate, sleep stages, SpO2, weight, blood pressure, VO2 max, training
+            load, continuous glucose, skin temperature deviation. Syncs from Apple HealthKit, Garmin,
+            Oura, and Dexcom.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-neutral-800">Interventions</h3>
+          <p class="mt-2 text-neutral-600">
+            Medications, supplements, peptides, nootropics — substance, dose, unit, route, timing,
+            fasted state. The platform is non-judgmental: all interventions are legitimate data. No
+            validation or warnings on substance names.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-neutral-800">Subjective check-ins</h3>
+          <p class="mt-2 text-neutral-600">
+            Five daily scores (1-10): energy, mood, focus, recovery, libido. Takes less than 30
+            seconds. Over time, these correlate with objective metrics in ways that surprise you.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-neutral-800">Labs</h3>
+          <p class="mt-2 text-neutral-600">
+            Blood panel data with reference ranges. Upload PDFs from Quest or LabCorp, or enter
+            results manually. Track markers over time with trend lines and out-of-range flagging.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-neutral-800">Calendar</h3>
+          <p class="mt-2 text-neutral-600">
+            Meeting count and minutes per day from Google Calendar. Meeting load is health data —
+            correlate it with HRV, sleep, and energy.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-neutral-800">Observations</h3>
+          <p class="mt-2 text-neutral-600">
+            Events (cold plunge, sauna, injury), custom scales (pain, stress), symptoms (brain fog,
+            headache), context tags (travel, altitude), environmental data (temperature, AQI), and
+            freeform notes. Fully user-defined — no waiting for a schema update.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The cooperative model -->
+  <section class="py-20 md:py-28 bg-surface-elevated">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="text-3xl font-bold text-neutral-900 font-display">The cooperative model</h2>
+
+      <div class="mt-10 space-y-6 text-lg text-neutral-600 leading-relaxed">
+        <p>
+          OwnPulse operates as a data cooperative under a nonprofit structure. There are two ways
+          to use it: self-host on your own server (any Linux VPS with 2GB RAM) or use the
+          cooperative-hosted tier. Both use the same code, the same Helm charts, the same data
+          format.
+        </p>
+        <p>
+          If you use the cooperative-hosted tier, you can opt in to contribute anonymized data to a
+          research marketplace — per dataset, granular, revocable at any time. Genetic data requires
+          a separate, stricter consent. The anonymization standard uses k-anonymity (k&ge;50),
+          differential privacy, and weekly-resolution aggregates. Researchers get aggregate query
+          access only — never raw exports.
+        </p>
+        <p>
+          When cooperative data is sold to researchers, 80% of the revenue is distributed to
+          consenting members as hosting credits or charitable donations. The remaining 20% covers
+          infrastructure and operating costs. There are no shareholders, no venture capital, no
+          exit strategy that involves selling your data.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy by design -->
+  <section class="py-20 md:py-28 bg-surface">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="text-3xl font-bold text-neutral-900 font-display">Privacy by design</h2>
+
+      <ul class="mt-10 space-y-5 text-lg text-neutral-600">
+        <li class="flex gap-3">
+          <span class="text-accent font-bold shrink-0">&mdash;</span>
+          <span>Data stored on your infrastructure (self-hosted) or your chosen region (cooperative hosted).</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-accent font-bold shrink-0">&mdash;</span>
+          <span>Full export anytime — JSON, CSV, FHIR R4. No friction, no delay.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-accent font-bold shrink-0">&mdash;</span>
+          <span>GDPR, CCPA, and PIPEDA compliant. Data subject rights implemented as API endpoints.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-accent font-bold shrink-0">&mdash;</span>
+          <span>User-held encryption keys on the cooperative hosted tier.</span>
+        </li>
+        <li class="flex gap-3">
+          <span class="text-accent font-bold shrink-0">&mdash;</span>
+          <span>No analytics. No telemetry. No phone-home behavior. Zero tracking.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Built in the open -->
+  <section class="py-20 md:py-28 bg-surface-elevated">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="text-3xl font-bold text-neutral-900 font-display">Built in the open</h2>
+
+      <div class="mt-10 space-y-6 text-lg text-neutral-600 leading-relaxed">
+        <p>
+          <strong class="text-neutral-800">AGPL-3.0</strong> — any company offering OwnPulse as a
+          hosted service must publish their modifications. Improvements flow back to the community.
+          You can audit every line of code that touches your health data.
+        </p>
+        <p>
+          <strong class="text-neutral-800">Open data schema (CC0)</strong> — the export format is
+          public domain. Any application can read an OwnPulse export without license obligation.
+          Your data is never locked in a proprietary format.
+        </p>
+        <p>
+          <strong class="text-neutral-800">Public architecture decisions</strong> — every
+          significant technical choice is documented as an Architecture Decision Record in the
+          repository. Read why we chose Rust, why AGPL, why Kubernetes, why this testing strategy.
+        </p>
+        <p>
+          <strong class="text-neutral-800">Cooperative governance</strong> — the community elects
+          board seats. One member, one vote. No class of shares that concentrates control.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team / founding -->
+  <section class="py-20 md:py-28 bg-surface">
+    <div class="mx-auto max-w-3xl px-6">
+      <h2 class="text-3xl font-bold text-neutral-900 font-display">Who's building this</h2>
+
+      <p class="mt-6 text-lg text-neutral-600 leading-relaxed">
+        OwnPulse is early stage. Built by a small team who got tired of their health data being
+        someone else's asset. We track peptides, supplements, and biomarkers — and we wanted a
+        platform that treats all of that as legitimate data without judgment, on infrastructure we
+        control, with a data format we can take anywhere.
+      </p>
+      <p class="mt-4 text-lg text-neutral-600 leading-relaxed">
+        If that resonates, <a href="#waitlist" class="text-primary hover:text-primary-dark underline">join the waitlist</a>
+        or <a href="https://github.com/ownpulse/ownpulse" class="text-primary hover:text-primary-dark underline" target="_blank" rel="noopener noreferrer">contribute on GitHub</a>.
+      </p>
+    </div>
+  </section>
+</Base>
