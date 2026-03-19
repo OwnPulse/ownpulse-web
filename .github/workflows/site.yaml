@@ -1,0 +1,86 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/**
+      - public/**
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
+      - nginx.conf
+      - Dockerfile
+  pull_request:
+    paths:
+      - src/**
+      - public/**
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
+      - nginx.conf
+      - Dockerfile
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ownpulse/ownpulse-web-public
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image-tag: ${{ steps.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        if: github.event_name == 'push'
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: arc-runner-set
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Deploy site
+        run: >
+          helm upgrade --install web-public helm/web-public
+          -n ownpulse
+          --set image.tag=sha-${GITHUB_SHA::7}
+
+      - name: Verify rollout
+        id: rollout
+        run: kubectl rollout status deployment -l app.kubernetes.io/name=ownpulse-web-public -n ownpulse --timeout=120s
+
+      - name: Rollback on failure
+        if: failure() && steps.rollout.outcome == 'failure'
+        run: helm rollback web-public -n ownpulse
