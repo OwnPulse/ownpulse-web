@@ -48,28 +48,36 @@
         <line x1="320" y1="0" x2="320" y2="360" stroke="#deded6" stroke-width="0.5"/>
         <line x1="400" y1="0" x2="400" y2="360" stroke="#deded6" stroke-width="0.5"/>
 
-        <!-- Primary time-series line (HRV-like) -->
+        <!--
+          Story: HRV (primary) and deep sleep (secondary) both improve
+          after two interventions. Glucose (tertiary) stays noisy/flat
+          — it doesn't correlate, which is realistic.
+
+          Event 1 (~day 5): "Caffeine ≤70mg/day"
+          Event 2 (~day 9): "Mg glycinate 400mg before bed"
+        -->
+
+        <!-- Primary: HRV (ms) — flat/noisy before event 1, then rising -->
         <polyline
-          points="20,200 60,180 100,190 140,160 180,170 220,140 260,150 300,120 340,130 380,110 420,125 460,100"
+          points="20,195 60,205 100,190 140,200 180,195 220,175 260,160 300,145 340,155 380,130 420,120 460,115"
           stroke="#c2654a"
           stroke-width="2.5"
           stroke-linecap="round"
           stroke-linejoin="round"
           fill="none"
         />
-        <!-- Gradient fill under primary -->
         <linearGradient id="grad-primary" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#c2654a" stop-opacity="0.15"/>
           <stop offset="100%" stop-color="#c2654a" stop-opacity="0"/>
         </linearGradient>
         <polygon
-          points="20,200 60,180 100,190 140,160 180,170 220,140 260,150 300,120 340,130 380,110 420,125 460,100 460,280 20,280"
+          points="20,195 60,205 100,190 140,200 180,195 220,175 260,160 300,145 340,155 380,130 420,120 460,115 460,280 20,280"
           fill="url(#grad-primary)"
         />
 
-        <!-- Secondary time-series line (sleep-like) -->
+        <!-- Secondary: Deep sleep (hrs) — mirrors HRV improvement -->
         <polyline
-          points="20,260 60,250 100,240 140,255 180,230 220,245 260,225 300,235 340,210 380,220 420,205 460,215"
+          points="20,255 60,260 100,250 140,258 180,252 220,238 260,225 300,215 340,222 380,205 420,198 460,195"
           stroke="#3d8b8b"
           stroke-width="2"
           stroke-linecap="round"
@@ -78,20 +86,24 @@
           stroke-dasharray="6 3"
         />
 
-        <!-- Data points on primary -->
-        <circle cx="140" cy="160" r="4" fill="#c2654a"/>
-        <circle cx="300" cy="120" r="4" fill="#c2654a"/>
-        <circle cx="460" cy="100" r="4" fill="#c2654a"/>
+        <!-- Data points on HRV where it notably shifts -->
+        <circle cx="220" cy="175" r="4" fill="#c2654a"/>
+        <circle cx="380" cy="130" r="4" fill="#c2654a"/>
+        <circle cx="460" cy="115" r="4" fill="#c2654a"/>
 
-        <!-- Event markers (intervention points) -->
-        <line x1="200" y1="40" x2="200" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
-        <circle cx="200" cy="40" r="5" fill="#c49a3c"/>
-        <line x1="360" y1="40" x2="360" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
-        <circle cx="360" cy="40" r="5" fill="#c49a3c"/>
+        <!-- Event 1: Caffeine reduction -->
+        <line x1="190" y1="28" x2="190" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <circle cx="190" cy="28" r="4" fill="#c49a3c"/>
+        <text x="196" y="24" fill="#c49a3c" font-size="9" font-family="IBM Plex Sans, sans-serif">Caffeine ≤70mg/day</text>
 
-        <!-- Tertiary sparkline (glucose-like, subtle) -->
+        <!-- Event 2: Magnesium -->
+        <line x1="340" y1="28" x2="340" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <circle cx="340" cy="28" r="4" fill="#c49a3c"/>
+        <text x="346" y="24" fill="#c49a3c" font-size="9" font-family="IBM Plex Sans, sans-serif">Mg glycinate 400mg</text>
+
+        <!-- Tertiary: Glucose (mg/dL) — noisy, doesn't correlate -->
         <polyline
-          points="20,300 60,295 100,310 140,290 180,305 220,285 260,300 300,280 340,295 380,275 420,290 460,270"
+          points="20,305 60,290 100,310 140,295 180,315 220,298 260,308 300,292 340,302 380,310 420,295 460,305"
           stroke="#9c9c93"
           stroke-width="1.5"
           stroke-linecap="round"
