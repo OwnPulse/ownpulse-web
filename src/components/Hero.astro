@@ -1,0 +1,104 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) OwnPulse Contributors
+---
+
+<section class="relative overflow-hidden bg-surface-elevated">
+  <div class="mx-auto max-w-6xl px-6 py-24 md:py-32 grid md:grid-cols-2 gap-16 items-center">
+    <div>
+      <h1 class="text-5xl md:text-5xl font-bold leading-tight tracking-tight text-neutral-900 font-display">
+        Own Your Health&nbsp;Data
+      </h1>
+      <p class="mt-4 text-xl text-primary font-medium font-display">
+        Your data. Your health. Your benefit.
+      </p>
+      <p class="mt-6 text-lg text-neutral-600 leading-relaxed max-w-lg">
+        OwnPulse is an open-source platform and data cooperative that brings every health signal into
+        one place — wearables, labs, interventions, check-ins — on infrastructure you control. When you
+        choose to share anonymized data, the value flows back to you.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a
+          href="#waitlist"
+          class="inline-flex items-center rounded-md bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary-dark transition-colors"
+        >
+          Get early access
+        </a>
+        <a
+          href="https://github.com/ownpulse/ownpulse"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center rounded-md border-2 border-neutral-300 px-6 py-3 text-base font-medium text-neutral-700 hover:border-neutral-500 hover:text-neutral-900 transition-colors"
+        >
+          View on GitHub
+        </a>
+      </div>
+    </div>
+
+    <!-- Abstract data visualization motif -->
+    <div class="hidden md:block" aria-hidden="true">
+      <svg viewBox="0 0 480 360" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+        <!-- Grid lines -->
+        <line x1="0" y1="80" x2="480" y2="80" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="0" y1="160" x2="480" y2="160" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="0" y1="240" x2="480" y2="240" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="80" y1="0" x2="80" y2="360" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="160" y1="0" x2="160" y2="360" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="240" y1="0" x2="240" y2="360" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="320" y1="0" x2="320" y2="360" stroke="#deded6" stroke-width="0.5"/>
+        <line x1="400" y1="0" x2="400" y2="360" stroke="#deded6" stroke-width="0.5"/>
+
+        <!-- Primary time-series line (HRV-like) -->
+        <polyline
+          points="20,200 60,180 100,190 140,160 180,170 220,140 260,150 300,120 340,130 380,110 420,125 460,100"
+          stroke="#c2654a"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+        <!-- Gradient fill under primary -->
+        <linearGradient id="grad-primary" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c2654a" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="#c2654a" stop-opacity="0"/>
+        </linearGradient>
+        <polygon
+          points="20,200 60,180 100,190 140,160 180,170 220,140 260,150 300,120 340,130 380,110 420,125 460,100 460,280 20,280"
+          fill="url(#grad-primary)"
+        />
+
+        <!-- Secondary time-series line (sleep-like) -->
+        <polyline
+          points="20,260 60,250 100,240 140,255 180,230 220,245 260,225 300,235 340,210 380,220 420,205 460,215"
+          stroke="#3d8b8b"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+          stroke-dasharray="6 3"
+        />
+
+        <!-- Data points on primary -->
+        <circle cx="140" cy="160" r="4" fill="#c2654a"/>
+        <circle cx="300" cy="120" r="4" fill="#c2654a"/>
+        <circle cx="460" cy="100" r="4" fill="#c2654a"/>
+
+        <!-- Event markers (intervention points) -->
+        <line x1="200" y1="40" x2="200" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <circle cx="200" cy="40" r="5" fill="#c49a3c"/>
+        <line x1="360" y1="40" x2="360" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
+        <circle cx="360" cy="40" r="5" fill="#c49a3c"/>
+
+        <!-- Tertiary sparkline (glucose-like, subtle) -->
+        <polyline
+          points="20,300 60,295 100,310 140,290 180,305 220,285 260,300 300,280 340,295 380,275 420,290 460,270"
+          stroke="#9c9c93"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+      </svg>
+    </div>
+  </div>
+</section>

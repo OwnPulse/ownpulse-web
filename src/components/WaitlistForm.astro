@@ -1,0 +1,96 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) OwnPulse Contributors
+---
+
+<section id="waitlist" class="py-20 md:py-28 bg-neutral-900">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="max-w-xl">
+      <h2 class="text-3xl font-bold text-white font-display">Get early access</h2>
+      <p class="mt-4 text-neutral-400 leading-relaxed">
+        We'll reach out when the cooperative-hosted tier opens. No spam, no third-party services — just
+        a heads up when it's ready.
+      </p>
+
+      <form id="waitlist-form" class="mt-8 space-y-4">
+        <div>
+          <label for="waitlist-name" class="block text-sm font-medium text-neutral-400 mb-1">
+            Name <span class="text-neutral-600">(optional)</span>
+          </label>
+          <input
+            type="text"
+            id="waitlist-name"
+            name="name"
+            autocomplete="name"
+            class="w-full rounded-md border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="Your name"
+          />
+        </div>
+        <div>
+          <label for="waitlist-email" class="block text-sm font-medium text-neutral-400 mb-1">
+            Email <span class="text-primary">*</span>
+          </label>
+          <input
+            type="email"
+            id="waitlist-email"
+            name="email"
+            required
+            autocomplete="email"
+            class="w-full rounded-md border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-white placeholder-neutral-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="you@example.com"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full rounded-md bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary-dark transition-colors"
+        >
+          Join the waitlist
+        </button>
+      </form>
+
+      <div id="waitlist-success" class="mt-8 hidden">
+        <p class="text-accent-light font-medium">You're on the list — we'll be in touch.</p>
+      </div>
+
+      <p class="mt-6 text-sm text-neutral-500">
+        Already technical?
+        <a
+          href="https://github.com/ownpulse/ownpulse/blob/main/docs/guides/self-hosting.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-accent-light hover:text-accent underline"
+        >
+          Self-host today &rarr;
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById("waitlist-form") as HTMLFormElement;
+  const success = document.getElementById("waitlist-success") as HTMLDivElement;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const body = {
+      name: data.get("name") || undefined,
+      email: data.get("email"),
+    };
+
+    // TODO: wire up real waitlist API endpoint
+    try {
+      await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } catch {
+      // Show success regardless — the endpoint doesn't exist yet
+    }
+
+    form.classList.add("hidden");
+    success.classList.remove("hidden");
+  });
+</script>

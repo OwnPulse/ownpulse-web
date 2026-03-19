@@ -1,0 +1,44 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) OwnPulse Contributors
+
+const steps = [
+  {
+    number: "1",
+    title: "Connect your devices",
+    description:
+      "HealthKit, Garmin, Oura, and CGM sync automatically. Google Calendar too — meeting load is health data. Everything else supports manual entry.",
+  },
+  {
+    number: "2",
+    title: "See your full picture",
+    description:
+      "One timeline with every metric overlaid. Interventions, labs, check-ins, sleep, HRV, glucose — aligned on the same time axis. Spot patterns you couldn't see before.",
+  },
+  {
+    number: "3",
+    title: "Own every bit of it",
+    description:
+      "Self-host on your own server, or use the cooperative-hosted tier. Export everything at any time — JSON, CSV, or FHIR R4. No lock-in, no friction, no gates.",
+  },
+];
+---
+
+<section class="py-20 md:py-28 bg-surface-elevated">
+  <div class="mx-auto max-w-6xl px-6">
+    <h2 class="text-3xl font-bold text-neutral-900 font-display text-center">How it works</h2>
+    <div class="mt-14 grid md:grid-cols-3 gap-12">
+      {steps.map((step) => (
+        <div class="relative">
+          <div class="flex items-center gap-4 mb-4">
+            <span class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg font-mono">
+              {step.number}
+            </span>
+            <h3 class="text-xl font-bold text-neutral-900">{step.title}</h3>
+          </div>
+          <p class="text-neutral-600 leading-relaxed pl-14">{step.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
