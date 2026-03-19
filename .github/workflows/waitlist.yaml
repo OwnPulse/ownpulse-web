@@ -9,6 +9,7 @@ on:
     paths: [waitlist/**]
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   REGISTRY: ghcr.io
   IMAGE_NAME: ownpulse/ownpulse-waitlist
 
@@ -19,7 +20,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: docker/login-action@v3
         if: github.event_name == 'push'
@@ -36,7 +37,7 @@ jobs:
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: waitlist
           push: ${{ github.event_name == 'push' }}
@@ -48,7 +49,7 @@ jobs:
     if: github.event_name == 'push'
     runs-on: arc-runner-set
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -58,11 +59,8 @@ jobs:
           helm upgrade --install waitlist helm/waitlist
           -n ownpulse
           --set image.tag=sha-${GITHUB_SHA::7}
-
-      - name: Verify rollout
-        id: rollout
-        run: kubectl rollout status deployment -l app.kubernetes.io/name=ownpulse-waitlist -n ownpulse --timeout=120s
+          --wait --timeout 120s
 
       - name: Rollback on failure
-        if: failure() && steps.rollout.outcome == 'failure'
+        if: failure()
         run: helm rollback waitlist -n ownpulse
