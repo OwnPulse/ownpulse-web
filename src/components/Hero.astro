@@ -4,7 +4,7 @@
 ---
 
 <section class="relative overflow-hidden bg-surface-elevated">
-  <div class="mx-auto max-w-6xl px-6 py-24 md:py-32 grid md:grid-cols-2 gap-16 items-center">
+  <div class="mx-auto max-w-6xl px-6 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
     <div>
       <h1 class="text-5xl md:text-5xl font-bold leading-tight tracking-tight text-neutral-900 font-display">
         Every signal.<br/>One&nbsp;timeline.
@@ -12,12 +12,12 @@
       <p class="mt-4 text-xl text-primary font-medium font-display">
         Your data. Your health. Your benefit.
       </p>
-      <p class="mt-6 text-lg text-neutral-600 leading-relaxed max-w-lg">
+      <p class="mt-4 text-lg text-neutral-600 leading-relaxed max-w-lg">
         OwnPulse brings together everything that affects your health — wearables, labs, supplements,
         peptides, CGM, sleep, meetings, subjective check-ins — and puts it on a single timeline.
         See the correlations no single app can show you.
       </p>
-      <div class="mt-8 flex flex-wrap gap-4">
+      <div class="mt-6 flex flex-wrap gap-4">
         <a
           href="#waitlist"
           class="inline-flex items-center rounded-md bg-primary px-6 py-3 text-base font-medium text-white hover:bg-primary-dark transition-colors"
@@ -91,6 +91,10 @@
         <circle cx="380" cy="130" r="4" fill="#c2654a"/>
         <circle cx="460" cy="115" r="4" fill="#c2654a"/>
 
+        <!-- Line labels (right end) -->
+        <text x="466" y="110" fill="#c2654a" font-size="9" font-weight="600" font-family="IBM Plex Sans, sans-serif">HRV</text>
+        <text x="466" y="190" fill="#3d8b8b" font-size="9" font-weight="600" font-family="IBM Plex Sans, sans-serif">Deep sleep</text>
+
         <!-- Event 1: Caffeine reduction -->
         <line x1="190" y1="28" x2="190" y2="280" stroke="#c49a3c" stroke-width="1" stroke-dasharray="4 4"/>
         <circle cx="190" cy="28" r="4" fill="#c49a3c"/>
@@ -110,6 +114,7 @@
           stroke-linejoin="round"
           fill="none"
         />
+        <text x="466" y="300" fill="#9c9c93" font-size="9" font-weight="600" font-family="IBM Plex Sans, sans-serif">Glucose</text>
       </svg>
     </div>
   </div>
