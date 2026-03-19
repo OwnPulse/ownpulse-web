@@ -1,16 +1,32 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-name: waitlist
+name: site
 
 on:
   push:
     branches: [main]
-    paths: [waitlist/**]
+    paths:
+      - src/**
+      - public/**
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
+      - nginx.conf
+      - Dockerfile
   pull_request:
-    paths: [waitlist/**]
+    paths:
+      - src/**
+      - public/**
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
+      - nginx.conf
+      - Dockerfile
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ownpulse/ownpulse-waitlist
+  IMAGE_NAME: ownpulse/ownpulse-web-public
 
 jobs:
   build:
@@ -18,6 +34,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      image-tag: ${{ steps.meta.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +56,7 @@ jobs:
 
       - uses: docker/build-push-action@v6
         with:
-          context: waitlist
+          context: .
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -53,16 +71,16 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Deploy waitlist
+      - name: Deploy site
         run: >
-          helm upgrade --install waitlist helm/waitlist
+          helm upgrade --install web-public helm/web-public
           -n ownpulse
           --set image.tag=sha-${GITHUB_SHA::7}
 
       - name: Verify rollout
         id: rollout
-        run: kubectl rollout status deployment -l app.kubernetes.io/name=ownpulse-waitlist -n ownpulse --timeout=120s
+        run: kubectl rollout status deployment -l app.kubernetes.io/name=ownpulse-web-public -n ownpulse --timeout=120s
 
       - name: Rollback on failure
         if: failure() && steps.rollout.outcome == 'failure'
-        run: helm rollback waitlist -n ownpulse
+        run: helm rollback web-public -n ownpulse
