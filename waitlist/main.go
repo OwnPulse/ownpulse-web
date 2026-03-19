@@ -6,6 +6,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -72,7 +73,7 @@ func migrate(db *sql.DB) error {
 func handleSignup(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req request
-		if err := json.NewDecoder(http.LimitReader(r.Body, 4096)).Decode(&req); err != nil {
+		if err := json.NewDecoder(io.LimitReader(r.Body, 4096)).Decode(&req); err != nil {
 			jsonError(w, "invalid JSON", http.StatusBadRequest)
 			return
 		}
