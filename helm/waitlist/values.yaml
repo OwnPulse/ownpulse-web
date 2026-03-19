@@ -17,4 +17,7 @@ resources:
     memory: 32Mi
     cpu: 50m
 
+imagePullSecrets:
+  - name: ghcr-pull-secret
+
 secretName: ownpulse-waitlist-secrets
