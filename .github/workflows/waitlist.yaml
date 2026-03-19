@@ -42,3 +42,27 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: arc-runner-set
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Deploy waitlist
+        run: >
+          helm upgrade --install waitlist helm/waitlist
+          -n ownpulse
+          --set image.tag=sha-${GITHUB_SHA::7}
+
+      - name: Verify rollout
+        id: rollout
+        run: kubectl rollout status deployment -l app.kubernetes.io/name=ownpulse-waitlist -n ownpulse --timeout=120s
+
+      - name: Rollback on failure
+        if: failure() && steps.rollout.outcome == 'failure'
+        run: helm rollback waitlist -n ownpulse
