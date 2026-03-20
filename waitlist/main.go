@@ -51,7 +51,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /signup", handleSignup(db))
+	mux.HandleFunc("POST /api/waitlist", handleSignup(db))
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		if err := db.Ping(); err != nil {
 			http.Error(w, "db unreachable", http.StatusServiceUnavailable)
@@ -75,6 +75,10 @@ func migrate(db *sql.DB) error {
 			created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 		)
 	`)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS persona TEXT`)
 	return err
 }
 
@@ -104,7 +108,7 @@ func handleSignup(db *sql.DB) http.HandlerFunc {
 		}
 
 		_, err := db.Exec(
-			`INSERT INTO waitlist (email, name, persona) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING`,
+			`INSERT INTO waitlist (email, name, persona) VALUES ($1, $2, $3) ON CONFLICT (email) DO UPDATE SET persona = COALESCE(EXCLUDED.persona, waitlist.persona)`,
 			req.Email, req.Name, persona,
 		)
 		if err != nil {
