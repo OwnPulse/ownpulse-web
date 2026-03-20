@@ -18,9 +18,16 @@ import (
 
 var emailRe = regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
 
+var validPersonas = map[string]bool{
+	"quantified_self": true, "biohacker": true, "peptide_pioneer": true,
+	"iron_scientist": true, "health_detective": true, "builder": true,
+	"clinician": true, "basics": true,
+}
+
 type request struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Persona string `json:"persona"`
 }
 
 func main() {
@@ -64,6 +71,7 @@ func migrate(db *sql.DB) error {
 			id         BIGSERIAL PRIMARY KEY,
 			email      TEXT NOT NULL UNIQUE,
 			name       TEXT NOT NULL DEFAULT '',
+			persona    TEXT,
 			created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 		)
 	`)
@@ -86,9 +94,18 @@ func handleSignup(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		var persona *string
+		if req.Persona != "" {
+			if !validPersonas[req.Persona] {
+				jsonError(w, "invalid persona", http.StatusBadRequest)
+				return
+			}
+			persona = &req.Persona
+		}
+
 		_, err := db.Exec(
-			`INSERT INTO waitlist (email, name) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING`,
-			req.Email, req.Name,
+			`INSERT INTO waitlist (email, name, persona) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING`,
+			req.Email, req.Name, persona,
 		)
 		if err != nil {
 			log.Printf("insert waitlist: %v", err)
