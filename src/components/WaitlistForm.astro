@@ -27,6 +27,22 @@
           />
         </div>
         <div>
+          <label class="block text-sm font-medium text-neutral-400 mb-1">
+            What describes you? <span class="text-neutral-600">(optional)</span>
+          </label>
+          <input type="hidden" name="persona" id="waitlist-persona" />
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-persona="quantified_self" title="I track everything" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Quantified Selfer</button>
+            <button type="button" data-persona="biohacker" title="Nootropics, cold plunge, HRV" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Biohacker</button>
+            <button type="button" data-persona="peptide_pioneer" title="Research compounds &amp; peptides" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Peptide Pioneer</button>
+            <button type="button" data-persona="iron_scientist" title="Lifting, recovery, body comp" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Iron Scientist</button>
+            <button type="button" data-persona="health_detective" title="Figuring out what's going on" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Health Detective</button>
+            <button type="button" data-persona="builder" title="I want to contribute or self-host" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Builder</button>
+            <button type="button" data-persona="clinician" title="Tracking patients or clients" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Clinician</button>
+            <button type="button" data-persona="basics" title="Weight, stress, sleep" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Just the Basics</button>
+          </div>
+        </div>
+        <div>
           <label for="waitlist-email" class="block text-sm font-medium text-neutral-400 mb-1">
             Email <span class="text-primary">*</span>
           </label>
@@ -70,6 +86,28 @@
 <script>
   const form = document.getElementById("waitlist-form") as HTMLFormElement;
   const success = document.getElementById("waitlist-success") as HTMLDivElement;
+  const personaInput = document.getElementById("waitlist-persona") as HTMLInputElement;
+
+  const SELECTED = "bg-primary text-white border-primary";
+  const UNSELECTED = "border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500";
+
+  form.querySelectorAll<HTMLButtonElement>(".persona-pill").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.dataset.persona!;
+      const isDeselect = personaInput.value === value;
+      personaInput.value = isDeselect ? "" : value;
+
+      form.querySelectorAll<HTMLButtonElement>(".persona-pill").forEach((b) => {
+        SELECTED.split(" ").forEach((c) => b.classList.remove(c));
+        UNSELECTED.split(" ").forEach((c) => b.classList.add(c));
+      });
+
+      if (!isDeselect) {
+        UNSELECTED.split(" ").forEach((c) => btn.classList.remove(c));
+        SELECTED.split(" ").forEach((c) => btn.classList.add(c));
+      }
+    });
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -77,6 +115,7 @@
     const body = {
       name: data.get("name") || undefined,
       email: data.get("email"),
+      persona: data.get("persona") || undefined,
     };
 
     try {
