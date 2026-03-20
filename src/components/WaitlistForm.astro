@@ -32,14 +32,14 @@
           </label>
           <input type="hidden" name="persona" id="waitlist-persona" />
           <div class="flex flex-wrap gap-2">
-            <button type="button" data-persona="quantified_self" title="I track everything" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Quantified Selfer</button>
-            <button type="button" data-persona="biohacker" title="Nootropics, cold plunge, HRV" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Biohacker</button>
-            <button type="button" data-persona="peptide_pioneer" title="Research compounds &amp; peptides" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Peptide Pioneer</button>
-            <button type="button" data-persona="iron_scientist" title="Lifting, recovery, body comp" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Iron Scientist</button>
-            <button type="button" data-persona="health_detective" title="Figuring out what's going on" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Health Detective</button>
-            <button type="button" data-persona="builder" title="I want to contribute or self-host" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Builder</button>
-            <button type="button" data-persona="clinician" title="Tracking patients or clients" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Clinician</button>
-            <button type="button" data-persona="basics" title="Weight, stress, sleep" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Just the Basics</button>
+            <button type="button" data-persona="quantified_self" title="I track everything" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Quantified Selfer</button>
+            <button type="button" data-persona="biohacker" title="Nootropics, cold plunge, HRV" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Biohacker</button>
+            <button type="button" data-persona="peptide_pioneer" title="Research compounds &amp; peptides" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Peptide Pioneer</button>
+            <button type="button" data-persona="iron_scientist" title="Lifting, recovery, body comp" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Iron Scientist</button>
+            <button type="button" data-persona="health_detective" title="Figuring out what's going on" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Health Detective</button>
+            <button type="button" data-persona="builder" title="I want to contribute or self-host" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Builder</button>
+            <button type="button" data-persona="clinician" title="Tracking patients or clients" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Clinician</button>
+            <button type="button" data-persona="basics" title="Weight, stress, sleep" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Just the Basics</button>
           </div>
         </div>
         <div>
@@ -100,11 +100,13 @@
       form.querySelectorAll<HTMLButtonElement>(".persona-pill").forEach((b) => {
         SELECTED.split(" ").forEach((c) => b.classList.remove(c));
         UNSELECTED.split(" ").forEach((c) => b.classList.add(c));
+        b.setAttribute("aria-pressed", "false");
       });
 
       if (!isDeselect) {
         UNSELECTED.split(" ").forEach((c) => btn.classList.remove(c));
         SELECTED.split(" ").forEach((c) => btn.classList.add(c));
+        btn.setAttribute("aria-pressed", "true");
       }
     });
   });
