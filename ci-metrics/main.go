@@ -24,7 +24,7 @@ var (
 			Name: "ci_workflow_runs_total",
 			Help: "Total number of CI workflow runs by workflow and conclusion.",
 		},
-		[]string{"workflow", "conclusion"},
+		[]string{"workflow", "conclusion", "branch", "repo"},
 	)
 	workflowDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -32,7 +32,7 @@ var (
 			Help:    "Duration of CI workflow runs in seconds.",
 			Buckets: []float64{30, 60, 120, 300, 600, 1200, 1800},
 		},
-		[]string{"workflow"},
+		[]string{"workflow", "branch", "repo"},
 	)
 	jobDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -40,7 +40,7 @@ var (
 			Help:    "Duration of CI jobs in seconds.",
 			Buckets: []float64{30, 60, 120, 300, 600, 1200, 1800},
 		},
-		[]string{"job", "conclusion"},
+		[]string{"job", "conclusion", "branch", "repo"},
 	)
 	jobQueue = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -48,7 +48,7 @@ var (
 			Help:    "Time CI jobs spent queued in seconds.",
 			Buckets: []float64{5, 10, 30, 60, 120, 300, 600},
 		},
-		[]string{"job"},
+		[]string{"job", "branch", "repo"},
 	)
 )
 
@@ -61,9 +61,13 @@ type WorkflowRunEvent struct {
 	WorkflowRun struct {
 		Name       string `json:"name"`
 		Conclusion string `json:"conclusion"`
+		HeadBranch string `json:"head_branch"`
 		CreatedAt  string `json:"created_at"`
 		UpdatedAt  string `json:"updated_at"`
 	} `json:"workflow_run"`
+	Repository struct {
+		Name string `json:"name"`
+	} `json:"repository"`
 }
 
 type WorkflowJobEvent struct {
@@ -71,10 +75,14 @@ type WorkflowJobEvent struct {
 	WorkflowJob struct {
 		Name        string `json:"name"`
 		Conclusion  string `json:"conclusion"`
+		HeadBranch  string `json:"head_branch"`
 		CreatedAt   string `json:"created_at"`
 		StartedAt   string `json:"started_at"`
 		CompletedAt string `json:"completed_at"`
 	} `json:"workflow_job"`
+	Repository struct {
+		Name string `json:"name"`
+	} `json:"repository"`
 }
 
 func main() {
@@ -121,9 +129,9 @@ func handleWebhook(secret []byte) http.HandlerFunc {
 				w.WriteHeader(http.StatusOK)
 				return
 			}
-			workflowRunsTotal.WithLabelValues(ev.WorkflowRun.Name, ev.WorkflowRun.Conclusion).Inc()
+			workflowRunsTotal.WithLabelValues(ev.WorkflowRun.Name, ev.WorkflowRun.Conclusion, ev.WorkflowRun.HeadBranch, ev.Repository.Name).Inc()
 			if dur := parseDuration(ev.WorkflowRun.CreatedAt, ev.WorkflowRun.UpdatedAt); dur > 0 {
-				workflowDuration.WithLabelValues(ev.WorkflowRun.Name).Observe(dur)
+				workflowDuration.WithLabelValues(ev.WorkflowRun.Name, ev.WorkflowRun.HeadBranch, ev.Repository.Name).Observe(dur)
 			}
 
 		case "workflow_job":
@@ -137,10 +145,10 @@ func handleWebhook(secret []byte) http.HandlerFunc {
 				return
 			}
 			if dur := parseDuration(ev.WorkflowJob.StartedAt, ev.WorkflowJob.CompletedAt); dur > 0 {
-				jobDuration.WithLabelValues(ev.WorkflowJob.Name, ev.WorkflowJob.Conclusion).Observe(dur)
+				jobDuration.WithLabelValues(ev.WorkflowJob.Name, ev.WorkflowJob.Conclusion, ev.WorkflowJob.HeadBranch, ev.Repository.Name).Observe(dur)
 			}
 			if queueTime := parseDuration(ev.WorkflowJob.CreatedAt, ev.WorkflowJob.StartedAt); queueTime > 0 {
-				jobQueue.WithLabelValues(ev.WorkflowJob.Name).Observe(queueTime)
+				jobQueue.WithLabelValues(ev.WorkflowJob.Name, ev.WorkflowJob.HeadBranch, ev.Repository.Name).Observe(queueTime)
 			}
 
 		default:
