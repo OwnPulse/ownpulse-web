@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ownpulse-waitlist.fullname" . }}-postgres
+  labels:
+    app.kubernetes.io/name: {{ include "ownpulse-waitlist.name" . }}-postgres
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "ownpulse-waitlist.name" . }}-postgres
+    app.kubernetes.io/instance: {{ .Release.Name }}
