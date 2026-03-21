@@ -27,20 +27,24 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-neutral-400 mb-1">
+          <label for="waitlist-persona" class="block text-sm font-medium text-neutral-400 mb-1">
             What describes you? <span class="text-neutral-600">(optional)</span>
           </label>
-          <input type="hidden" name="persona" id="waitlist-persona" />
-          <div class="flex flex-wrap gap-2">
-            <button type="button" data-persona="quantified_self" title="I track everything" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Quantified Selfer</button>
-            <button type="button" data-persona="biohacker" title="Nootropics, cold plunge, HRV" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Biohacker</button>
-            <button type="button" data-persona="peptide_pioneer" title="Research compounds &amp; peptides" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Peptide Pioneer</button>
-            <button type="button" data-persona="iron_scientist" title="Lifting, recovery, body comp" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Iron Scientist</button>
-            <button type="button" data-persona="health_detective" title="Figuring out what's going on" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Health Detective</button>
-            <button type="button" data-persona="builder" title="I want to contribute or self-host" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Builder</button>
-            <button type="button" data-persona="clinician" title="Tracking patients or clients" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Clinician</button>
-            <button type="button" data-persona="basics" title="Weight, stress, sleep" aria-pressed="false" class="persona-pill rounded-full border px-3 py-1.5 text-sm transition-colors border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500">Just the Basics</button>
-          </div>
+          <select
+            name="persona"
+            id="waitlist-persona"
+            class="w-full rounded-md border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="">Select one…</option>
+            <option value="quantified_self">Quantified Selfer — I track everything</option>
+            <option value="biohacker">Biohacker — Nootropics, cold plunge, HRV</option>
+            <option value="peptide_pioneer">Peptide Pioneer — Research compounds &amp; peptides</option>
+            <option value="iron_scientist">Iron Scientist — Lifting, recovery, body comp</option>
+            <option value="health_detective">Health Detective — Figuring out what's going on</option>
+            <option value="builder">Builder — I want to contribute or self-host</option>
+            <option value="clinician">Clinician — Tracking patients or clients</option>
+            <option value="basics">Just the Basics — Weight, stress, sleep</option>
+          </select>
         </div>
         <div>
           <label for="waitlist-email" class="block text-sm font-medium text-neutral-400 mb-1">
@@ -86,30 +90,6 @@
 <script>
   const form = document.getElementById("waitlist-form") as HTMLFormElement;
   const success = document.getElementById("waitlist-success") as HTMLDivElement;
-  const personaInput = document.getElementById("waitlist-persona") as HTMLInputElement;
-
-  const SELECTED = "bg-primary text-white border-primary";
-  const UNSELECTED = "border-neutral-700 bg-neutral-800 text-neutral-300 hover:border-neutral-500";
-
-  form.querySelectorAll<HTMLButtonElement>(".persona-pill").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const value = btn.dataset.persona!;
-      const isDeselect = personaInput.value === value;
-      personaInput.value = isDeselect ? "" : value;
-
-      form.querySelectorAll<HTMLButtonElement>(".persona-pill").forEach((b) => {
-        SELECTED.split(" ").forEach((c) => b.classList.remove(c));
-        UNSELECTED.split(" ").forEach((c) => b.classList.add(c));
-        b.setAttribute("aria-pressed", "false");
-      });
-
-      if (!isDeselect) {
-        UNSELECTED.split(" ").forEach((c) => btn.classList.remove(c));
-        SELECTED.split(" ").forEach((c) => btn.classList.add(c));
-        btn.setAttribute("aria-pressed", "true");
-      }
-    });
-  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
