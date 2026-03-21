@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ci-metrics
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ci.ownpulse.health
+      http:
+        paths:
+          - path: /webhook
+            pathType: Exact
+            backend:
+              service:
+                name: {{ include "ci-metrics.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+  tls:
+    - hosts:
+        - ci.ownpulse.health
+      secretName: ci-metrics-tls
