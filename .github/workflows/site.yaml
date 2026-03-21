@@ -14,6 +14,7 @@ on:
       - tsconfig.json
       - nginx.conf
       - Dockerfile
+      - helm/web-public/**
   pull_request:
     paths:
       - src/**
@@ -24,6 +25,7 @@ on:
       - tsconfig.json
       - nginx.conf
       - Dockerfile
+      - helm/web-public/**
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -78,8 +80,4 @@ jobs:
           helm upgrade --install web-public helm/web-public
           -n ownpulse
           --set image.tag=sha-${GITHUB_SHA::7}
-          --wait --timeout 120s
-
-      - name: Rollback on failure
-        if: failure()
-        run: helm rollback web-public -n ownpulse
+          --atomic --timeout 300s
