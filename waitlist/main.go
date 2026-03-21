@@ -6,15 +6,40 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+var (
+	signupsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "waitlist_signups_total",
+		Help: "Total number of waitlist signup attempts.",
+	}, []string{"status"})
+
+	httpRequestsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "waitlist_http_requests_total",
+		Help: "Total number of HTTP requests.",
+	}, []string{"method", "path", "status_code"})
+
+	httpRequestDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name: "waitlist_http_request_duration_seconds",
+		Help: "HTTP request duration in seconds.",
+	}, []string{"method", "path"})
+)
+
+func init() {
+	prometheus.MustRegister(signupsTotal, httpRequestsTotal, httpRequestDuration)
+}
 
 var emailRe = regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
 
@@ -59,10 +84,11 @@ func main() {
 		}
 		w.WriteHeader(http.StatusOK)
 	})
+	mux.Handle("GET /metrics", promhttp.Handler())
 
 	addr := ":8080"
 	log.Printf("waitlist listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, mux))
+	log.Fatal(http.ListenAndServe(addr, metricsMiddleware(mux)))
 }
 
 func migrate(db *sql.DB) error {
@@ -80,6 +106,28 @@ func migrate(db *sql.DB) error {
 	}
 	_, err = db.Exec(`ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS persona TEXT`)
 	return err
+}
+
+// statusWriter wraps http.ResponseWriter to capture the status code.
+type statusWriter struct {
+	http.ResponseWriter
+	code int
+}
+
+func (w *statusWriter) WriteHeader(code int) {
+	w.code = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func metricsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		sw := &statusWriter{ResponseWriter: w, code: http.StatusOK}
+		next.ServeHTTP(sw, r)
+		duration := time.Since(start).Seconds()
+		httpRequestsTotal.WithLabelValues(r.Method, r.URL.Path, fmt.Sprintf("%d", sw.code)).Inc()
+		httpRequestDuration.WithLabelValues(r.Method, r.URL.Path).Observe(duration)
+	})
 }
 
 func handleSignup(db *sql.DB) http.HandlerFunc {
@@ -113,10 +161,12 @@ func handleSignup(db *sql.DB) http.HandlerFunc {
 		)
 		if err != nil {
 			log.Printf("insert waitlist: %v", err)
+			signupsTotal.WithLabelValues("error").Inc()
 			jsonError(w, "internal error", http.StatusInternalServerError)
 			return
 		}
 
+		signupsTotal.WithLabelValues("created").Inc()
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
