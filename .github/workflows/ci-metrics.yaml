@@ -10,39 +10,27 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ownpulse/ownpulse-ci-metrics
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v6
 
-      - uses: docker/login-action@v3
+      - name: Build Docker image (PR validation)
+        if: github.event_name == 'pull_request'
+        run: docker build ci-metrics
+
+      - uses: OwnPulse/gh-actions/docker-build-push@v1
         if: github.event_name == 'push'
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - uses: docker/build-push-action@v7
-        with:
           context: ci-metrics
-          push: ${{ github.event_name == 'push' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          image-name: ownpulse-ci-metrics
+          tag: ${{ github.sha }}
 
   deploy:
     needs: build
@@ -51,16 +39,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install kubectl
+        run: |
+          curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Deploy ci-metrics
-        run: >
-          helm upgrade --install ci-metrics helm/ci-metrics
-          -n ownpulse
-          --set image.tag=sha-${GITHUB_SHA::7}
-          --wait --timeout 120s
-
-      - name: Rollback on failure
-        if: failure()
-        run: helm rollback ci-metrics -n ownpulse
+      - uses: OwnPulse/gh-actions/helm-deploy@v1
+        with:
+          release-name: ci-metrics
+          chart-path: helm/ci-metrics
+          namespace: ownpulse
+          image-tag: ${{ github.sha }}
+          deployment-name: ci-metrics
+          timeout: 120s
