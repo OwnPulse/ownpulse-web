@@ -15,6 +15,8 @@ on:
       - nginx.conf
       - Dockerfile
       - helm/web-public/**
+      - helm/waitlist/**
+      - tests/**
   pull_request:
     paths:
       - src/**
@@ -26,6 +28,8 @@ on:
       - nginx.conf
       - Dockerfile
       - helm/web-public/**
+      - helm/waitlist/**
+      - tests/**
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -35,7 +39,19 @@ permissions:
   packages: write
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+
+      - name: Install Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4  # v4
+
+      - name: Check nginx/Helm service name consistency
+        run: ./tests/test-nginx-helm-consistency.sh
+
   build:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
