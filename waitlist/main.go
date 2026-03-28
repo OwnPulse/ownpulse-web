@@ -105,7 +105,28 @@ func migrate(db *sql.DB) error {
 		return err
 	}
 	_, err = db.Exec(`ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS persona TEXT`)
-	return err
+	if err != nil {
+		return err
+	}
+
+	roPass := os.Getenv("GRAFANA_RO_PASSWORD")
+	if roPass != "" {
+		escapedPass := strings.ReplaceAll(roPass, "'", "''")
+		stmts := []string{
+			`DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'grafana_ro') THEN CREATE ROLE grafana_ro; END IF; END $$`,
+			fmt.Sprintf(`ALTER ROLE grafana_ro WITH LOGIN PASSWORD '%s'`, escapedPass),
+			`GRANT CONNECT ON DATABASE waitlist TO grafana_ro`,
+			`GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafana_ro`,
+			`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO grafana_ro`,
+		}
+		for _, s := range stmts {
+			if _, err := db.Exec(s); err != nil {
+				return fmt.Errorf("grafana_ro setup: %w", err)
+			}
+		}
+	}
+
+	return nil
 }
 
 // statusWriter wraps http.ResponseWriter to capture the status code.

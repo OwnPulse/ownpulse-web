@@ -38,6 +38,12 @@ spec:
                 secretKeyRef:
                   name: {{ include "ownpulse-waitlist.fullname" . }}-postgres
                   key: DATABASE_URL
+            - name: GRAFANA_RO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: waitlist-grafana-ro
+                  key: password
+                  optional: true
           livenessProbe:
             httpGet:
               path: /healthz
